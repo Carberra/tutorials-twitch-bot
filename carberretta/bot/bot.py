@@ -7,13 +7,14 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from twitchio.ext import commands
 
 from carberretta import Config
+from carberretta.db import Database
 
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
         self._cogs: t.List[str] = [p.stem for p in Path(".").glob("./carberretta/bot/cogs/*.py")]
         self.scheduler = AsyncIOScheduler()
-        # self.db = Database(self)
+        self.db = Database(self)
 
         super().__init__(
             irc_token=Config.IRC_TOKEN,
@@ -41,9 +42,15 @@ class Bot(commands.Bot):
         super().run()
 
     async def event_ready(self) -> None:
+        await self.db.connect()
+        print(" Connected to database.")
+
+        self.scheduler.start()
+        print(f" Scheduler started ({len(self.scheduler.get_jobs()):,} job(s)).")
+
         self.channel: twitchio.Channel = self.get_channel(next(iter(self.initial_channels)))
         await self.channel.send(f"{Config.NICK} is now online!")
-        print("Bot ready.")
+        print("Bot ready. Do NOT use CTRL+C to shut the bot down!")
 
     @commands.command(name="shutdown")
     async def shutdown_command(self, ctx: commands.bot.Context) -> None:
@@ -52,6 +59,7 @@ class Bot(commands.Bot):
 
         await self.channel.send(f"{Config.NICK} is now shutting down.")
         self.scheduler.shutdown()
+        await self.db.close()
         sys.exit(0)
 
     async def on_error(self, error, data=None) -> None:
