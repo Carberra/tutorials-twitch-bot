@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tutorials-twitch-bot"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Twitch bot for use in the Carberra Tutorials Twitch channel."
 
 license = "BSD 3-Clause"
