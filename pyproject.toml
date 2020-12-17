@@ -14,8 +14,8 @@ authors = [
 [tool.poetry.dependencies]
 python = "^3.8"
 APScheduler = "^3.6.3"
+python-dotenv = "^0.15.0"
 twitchio = "^1.1.0"
-toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
