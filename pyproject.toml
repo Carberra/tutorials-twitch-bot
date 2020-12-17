@@ -13,6 +13,7 @@ authors = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
+aiosqlite = "^0.16.0"
 APScheduler = "^3.6.3"
 python-dotenv = "^0.15.0"
 twitchio = "^1.1.0"
