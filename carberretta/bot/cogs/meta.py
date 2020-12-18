@@ -17,6 +17,10 @@ class Meta:
         uptime = dt.datetime.utcnow() - dt.datetime.fromisoformat(data["started_at"][:-1])
         await ctx.send(f"{uptime}")
 
+    @commands.command(name="source")
+    async def source_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://github.com/Carberra/tutorials-twitch-bot")
+
     @commands.command(name="youtube")
     async def youtube_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://youtube.carberra.xyz")
