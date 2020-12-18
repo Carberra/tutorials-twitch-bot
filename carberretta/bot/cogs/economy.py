@@ -1,6 +1,7 @@
 import asyncio
 import datetime as dt
 import random
+import typing as t
 
 import twitchio
 from twitchio.ext import commands
@@ -13,7 +14,7 @@ class Economy:
         self.bot = bot
 
     async def process_credits(self, message: twitchio.Message) -> None:
-        modified = await self.bot.db.execute(
+        modified: int = await self.bot.db.execute(
             "INSERT INTO economy (User) VALUES (?) ON CONFLICT DO NOTHING", message.author.name
         )
         if modified:
@@ -21,7 +22,7 @@ class Economy:
                 f"Welcome to the channel {message.author.name}! I hope you enjoy your time here!"
             )
 
-        lock = await self.bot.db.field("SELECT Lock FROM economy WHERE User = ?", message.author.name)
+        lock: str = await self.bot.db.field("SELECT Lock FROM economy WHERE User = ?", message.author.name)
         if dt.datetime.utcnow() > dt.datetime.fromisoformat(lock):
             await self.bot.db.execute(
                 "UPDATE economy SET Credits = Credits + ?, Lock = datetime('now', '+60 seconds') WHERE User = ?",
@@ -40,7 +41,7 @@ class Economy:
         await asyncio.sleep(0.25)  # Delay to ensure accuracy.
 
         target = target.strip("@").lower() or ctx.author.name
-        bal = await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", target)
+        bal: t.Optional[int] = await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", target)
 
         if bal is None:
             return await ctx.send(f"{ctx.author.name}, that user is not in the database.")
@@ -66,6 +67,11 @@ class Economy:
         await self.bot.db.execute("UPDATE economy SET Credits = Credits + ? WHERE User = ?", amount, target)
         await self.bot.db.execute("UPDATE economy SET Credits = Credits - ? WHERE User = ?", amount, ctx.author.name)
         await ctx.send(f"{ctx.author.name} gave {amount:,} credits to {target}!")
+
+    @commands.command(name="bank")
+    async def bank_command(self, ctx: commands.bot.Context) -> None:
+        bal: int = await self.bot.db.field("SELECT Credits FROM economy WHERE User = 'bank'")
+        await ctx.send(f"There are currently {bal:,} credits in the bank.")
 
 
 def prepare(bot: commands.Bot) -> None:
