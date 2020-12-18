@@ -17,6 +17,22 @@ class Meta:
         uptime = dt.datetime.utcnow() - dt.datetime.fromisoformat(data["started_at"][:-1])
         await ctx.send(f"{uptime}")
 
+    @commands.command(name="youtube")
+    async def youtube_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://youtube.carberra.xyz")
+
+    @commands.command(name="discord")
+    async def discord_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://discord.carberra.xyz")
+
+    @commands.command(name="twitter")
+    async def twitter_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://twitter.carberra.xyz")
+
+    @commands.command(name="patreon")
+    async def patreon_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://patreon.carberra.xyz")
+
 
 def prepare(bot: commands.Bot) -> None:
     bot.add_cog(Meta(bot))
