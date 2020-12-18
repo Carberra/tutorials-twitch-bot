@@ -47,9 +47,9 @@ class Economy:
             return await ctx.send(f"{ctx.author.name}, that user is not in the database.")
 
         if target == ctx.author.name:
-            await ctx.send(f"{target}, you have {bal:,} credits.")
+            await ctx.send(f"{target}, you have {bal:,} credit(s).")
         else:
-            await ctx.send(f"{target} has {bal:,} credits.")
+            await ctx.send(f"{target} has {bal:,} credit(s).")
 
     @commands.command(name="give")
     async def give_command(self, ctx: commands.bot.Context, amount: int, target: str) -> None:
@@ -66,12 +66,12 @@ class Economy:
 
         await self.bot.db.execute("UPDATE economy SET Credits = Credits + ? WHERE User = ?", amount, target)
         await self.bot.db.execute("UPDATE economy SET Credits = Credits - ? WHERE User = ?", amount, ctx.author.name)
-        await ctx.send(f"{ctx.author.name} gave {amount:,} credits to {target}!")
+        await ctx.send(f"{ctx.author.name} gave {amount:,} credit(s) to {target}!")
 
     @commands.command(name="bank")
     async def bank_command(self, ctx: commands.bot.Context) -> None:
         bal: int = await self.bot.db.field("SELECT Credits FROM economy WHERE User = 'bank'")
-        await ctx.send(f"There are currently {bal:,} credits in the bank.")
+        await ctx.send(f"There are currently {bal:,} credit(s) in the bank.")
 
 
 def prepare(bot: commands.Bot) -> None:
