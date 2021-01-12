@@ -15,7 +15,8 @@ class Economy:
 
     async def process_credits(self, message: twitchio.Message) -> None:
         modified: int = await self.bot.db.execute(
-            "INSERT INTO economy (User) VALUES (?) ON CONFLICT DO NOTHING", message.author.name
+            "INSERT INTO economy (User) VALUES (?) ON CONFLICT DO NOTHING",
+            message.author.name,
         )
         if modified:
             await message.channel.send(
@@ -51,6 +52,14 @@ class Economy:
         else:
             await ctx.send(f"{target} has {bal:,} credit(s).")
 
+    @commands.command(name="leaderboard", aliases=["lb"])
+    async def leaderboard_command(self, ctx: commands.bot.Context) -> None:
+        await asyncio.sleep(0.25)  # Delay to ensure accuracy.
+        table: t.List[t.Tuple[str, int]] = await self.bot.db.records(
+            "SELECT User, Credits FROM economy WHERE User != 'bank' ORDER BY Credits DESC LIMIT 10"
+        )
+        await ctx.send("Displaying top 10: " + " • ".join(f"{user}: {bal}" for user, bal in table))
+
     @commands.command(name="give")
     async def give_command(self, ctx: commands.bot.Context, amount: int, target: str) -> None:
         target = target.strip("@").lower()
@@ -65,7 +74,11 @@ class Economy:
             return await ctx.send(f"{ctx.author.name}, that user is not in the database.")
 
         await self.bot.db.execute("UPDATE economy SET Credits = Credits + ? WHERE User = ?", amount, target)
-        await self.bot.db.execute("UPDATE economy SET Credits = Credits - ? WHERE User = ?", amount, ctx.author.name)
+        await self.bot.db.execute(
+            "UPDATE economy SET Credits = Credits - ? WHERE User = ?",
+            amount,
+            ctx.author.name,
+        )
         await ctx.send(f"{ctx.author.name} gave {amount:,} credit(s) to {target}!")
 
     @commands.command(name="bank")
