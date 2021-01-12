@@ -30,12 +30,17 @@ class HackGame:
     async def start(self, ctx: commands.bot.Context) -> None:
         self.state = GameState.WAITING
         await ctx.send(f"A hacking squad is being set up; use {Config.PREFIX}hack to join!")
-        self.bot.scheduler.add_job(self.run, next_run_time=dt.datetime.utcnow() + dt.timedelta(seconds=60), args=[ctx])
+        self.bot.scheduler.add_job(
+            self.run,
+            next_run_time=dt.datetime.utcnow() + dt.timedelta(seconds=60),
+            args=[ctx],
+        )
 
     async def run(self, ctx: commands.bot.Context) -> None:
         if len(self.participants) < 3:
             await self.bot.db.executemany(
-                "UPDATE economy SET Credits = Credits + ? WHERE User = ?", ((HACK_COST, p) for p in self.participants)
+                "UPDATE economy SET Credits = Credits + ? WHERE User = ?",
+                ((HACK_COST, p) for p in self.participants),
             )
             await ctx.send(
                 "The hack was cancelled as not enough users joined the squad. Those users that did have been refunded."
@@ -62,7 +67,8 @@ class HackGame:
 
         winnings = pool // len(self.participants)
         await self.bot.db.executemany(
-            "UPDATE economy SET Credits = Credits + ? WHERE User = ?", ((winnings, w) for w in winners)
+            "UPDATE economy SET Credits = Credits + ? WHERE User = ?",
+            ((winnings, w) for w in winners),
         )
         await ctx.send(
             f"The hack is complete! The following users got their {winnings:,} credit share: {', '.join(winners)}"
@@ -84,7 +90,9 @@ class HackGame:
             )
 
         await self.bot.db.execute(
-            "UPDATE economy SET Credits = Credits - ? WHERE User = ?", HACK_COST, ctx.author.name
+            "UPDATE economy SET Credits = Credits - ? WHERE User = ?",
+            HACK_COST,
+            ctx.author.name,
         )
         self.participants.append(ctx.author.name)
         await ctx.send(
@@ -117,11 +125,19 @@ class Fun:
 
         if guess[0] != random.choice("ht"):
             await ctx.send(f"Too bad {ctx.author.name}, you were wrong! {bet:,} credits have been added to the bank.")
-            await self.bot.db.execute("UPDATE economy SET Credits = Credits - ? WHERE User = ?", bet, ctx.author.name)
+            await self.bot.db.execute(
+                "UPDATE economy SET Credits = Credits - ? WHERE User = ?",
+                bet,
+                ctx.author.name,
+            )
             return await self.bot.db.execute("UPDATE economy SET Credits = Credits + ? WHERE User = 'bank'", bet)
 
         await ctx.send(f"Congratulations {ctx.author.name}, you were right! You've won {bet*2:,} credits!")
-        await self.bot.db.execute("UPDATE economy SET Credits = Credits + ? WHERE User = ?", bet, ctx.author.name)
+        await self.bot.db.execute(
+            "UPDATE economy SET Credits = Credits + ? WHERE User = ?",
+            bet,
+            ctx.author.name,
+        )
 
     @commands.command(name="hack")
     async def hack_command(self, ctx: commands.bot.Context) -> None:
