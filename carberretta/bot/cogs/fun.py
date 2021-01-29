@@ -115,6 +115,10 @@ class Fun:
     @commands.command(name="coinflip", aliases=["coin", "flip"])
     async def coinflip_command(self, ctx: commands.bot.Context, bet: int, guess: str) -> None:
         bal: int = await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", ctx.author.name)
+
+        if bet < 1:
+            return await ctx.send(f"{ctx.author.name}, you must bet at least 1 credit.")
+
         if bet > bal:
             return await ctx.send(
                 f"{ctx.author.name}, you do not have enough credits to make that bet; you only have {bal:,}."
