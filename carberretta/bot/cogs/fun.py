@@ -63,7 +63,8 @@ class HackGame:
         await self.bot.db.execute("UPDATE economy SET Credits = Credits - ? WHERE User = 'bank'", pool)
 
         if not winners:
-            return await ctx.send("The hack is complete; nobody managed to get anything!")
+            await ctx.send("The hack is complete; nobody managed to get anything!")
+            return await self.reset()
 
         winnings = pool // len(self.participants)
         await self.bot.db.executemany(
