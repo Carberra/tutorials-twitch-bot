@@ -4,6 +4,7 @@ from pathlib import Path
 
 import twitchio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from pytz import utc
 from twitchio.ext import commands
 
 from carberretta import Config
@@ -14,6 +15,7 @@ class Bot(commands.Bot):
     def __init__(self) -> None:
         self._cogs: t.List[str] = [p.stem for p in Path(".").glob("./carberretta/bot/cogs/*.py")]
         self.scheduler = AsyncIOScheduler()
+        self.scheduler.configure(timezone=utc)
         self.db = Database(self)
 
         super().__init__(
