@@ -113,6 +113,15 @@ class Fun:
 
         await ctx.send(f"{ctx.author.name}, you rolled a {random.randint(1, sides)}.")
 
+    @commands.command(name="hug", aliases=["cuddle"])
+    async def hug_command(self, ctx: commands.bot.Context, recipient: str) -> None:
+        users = await self.bot.db.column("SELECT User FROM economy")
+
+        if recipient.strip("@").lower() not in users:
+            return await ctx.send(f"{ctx.author.name}, I don't know who you're trying to hug.")
+
+        await ctx.send(f"{ctx.author.name} hugged {recipient.strip('@')}!")
+
     @commands.command(name="coinflip", aliases=["coin", "flip"])
     async def coinflip_command(self, ctx: commands.bot.Context, bet: int, guess: str) -> None:
         bal: int = await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", ctx.author.name)
