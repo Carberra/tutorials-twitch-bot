@@ -40,7 +40,23 @@ class Meta:
     @commands.command(name="plans", aliases=["plan"])
     async def plans_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://plans.carberra.xyz")
+        
+    @commands.command(name="facebook")
+    async def facebook_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://facebook.carberra.xyz")
+        
+    @commands.command(name="lbry", aliases=["odysee"])
+    async def lbry_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://lbry.carberra.xyz")
+    
+    @commands.command(name="donate")
+    async def donate_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://donate.carberra.xyz")
+        
+    @commands.command(name="docs")
+    async def docs_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://docs.carberra.xyz")
 
-
+        
 def prepare(bot: commands.Bot) -> None:
     bot.add_cog(Meta(bot))
