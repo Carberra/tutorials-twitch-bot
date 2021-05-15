@@ -56,7 +56,6 @@ class Meta:
     @commands.command(name="docs")
     async def docs_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://docs.carberra.xyz")
-
-        
+  
 def prepare(bot: commands.Bot) -> None:
     bot.add_cog(Meta(bot))
