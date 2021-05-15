@@ -36,6 +36,10 @@ class Meta:
     @commands.command(name="patreon")
     async def patreon_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://patreon.carberra.xyz")
+        
+    @commands.command(name="plans", aliases=["plan"])
+    async def plans_command(self, ctx: commands.bot.Context) -> None:
+        await ctx.send("https://plans.carberra.xyz")
 
 
 def prepare(bot: commands.Bot) -> None:
