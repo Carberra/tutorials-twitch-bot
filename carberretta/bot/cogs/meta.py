@@ -49,9 +49,9 @@ class Meta:
     async def lbry_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://lbry.carberra.xyz")
     
-    @commands.command(name="donate")
+    @commands.command(name="donate", aliases=["tip"])
     async def donate_command(self, ctx: commands.bot.Context) -> None:
-        await ctx.send("https://donate.carberra.xyz")
+        await ctx.send("https://tip.carberra.xyz")
         
     @commands.command(name="docs")
     async def docs_command(self, ctx: commands.bot.Context) -> None:
