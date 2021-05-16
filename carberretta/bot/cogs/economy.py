@@ -20,13 +20,19 @@ class Economy:
         )
         if modified:
             await message.channel.send(
-                f"Welcome to the channel {message.author.name}! I hope you enjoy your time here!"
+                f"Welcome to the channel {message.author.name}! "
+                "I hope you enjoy your time here!"
             )
 
-        lock: str = await self.bot.db.field("SELECT Lock FROM economy WHERE User = ?", message.author.name)
+        lock: str = await self.bot.db.field(
+            "SELECT Lock FROM economy WHERE User = ?", message.author.name
+        )
         if dt.datetime.utcnow() > dt.datetime.fromisoformat(lock):
             await self.bot.db.execute(
-                "UPDATE economy SET Credits = Credits + ?, Lock = datetime('now', '+60 seconds') WHERE User = ?",
+                (
+                    "UPDATE economy SET Credits = Credits + ?, "
+                    "Lock = datetime('now', '+60 seconds') WHERE User = ?",
+                ),
                 random.randint(5, 20),
                 message.author.name,
             )
@@ -37,15 +43,23 @@ class Economy:
 
         await self.process_credits(message)
 
-    @commands.command(name="credits", aliases=["economy", "money", "balance", "bal"])
-    async def credits_command(self, ctx: commands.bot.Context, target: str = "") -> None:
+    @commands.command(
+        name="credits", aliases=["economy", "money", "balance", "bal"]
+    )
+    async def credits_command(
+        self, ctx: commands.bot.Context, target: str = ""
+    ) -> None:
         await asyncio.sleep(0.25)  # Delay to ensure accuracy.
 
         target = target.strip("@").lower() or ctx.author.name
-        bal: t.Optional[int] = await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", target)
+        bal: t.Optional[int] = await self.bot.db.field(
+            "SELECT Credits FROM economy WHERE User = ?", target
+        )
 
         if bal is None:
-            return await ctx.send(f"{ctx.author.name}, that user is not in the database.")
+            return await ctx.send(
+                f"{ctx.author.name}, that user is not in the database."
+            )
 
         if target == ctx.author.name:
             await ctx.send(f"{target}, you have {bal:,} credit(s).")
@@ -56,34 +70,61 @@ class Economy:
     async def leaderboard_command(self, ctx: commands.bot.Context) -> None:
         await asyncio.sleep(0.25)  # Delay to ensure accuracy.
         table: t.List[t.Tuple[str, int]] = await self.bot.db.records(
-            "SELECT User, Credits FROM economy WHERE User != 'bank' ORDER BY Credits DESC LIMIT 10"
+            "SELECT User, Credits FROM economy WHERE User != 'bank' "
+            "ORDER BY Credits DESC LIMIT 10"
         )
-        await ctx.send("Displaying top 10: " + " • ".join(f"{user}: {bal}" for user, bal in table))
+        await ctx.send(
+            "Displaying top 10: "
+            + " • ".join(f"{user}: {bal}" for user, bal in table)
+        )
 
     @commands.command(name="give")
-    async def give_command(self, ctx: commands.bot.Context, amount: int, target: str) -> None:
+    async def give_command(
+        self, ctx: commands.bot.Context, amount: int, target: str
+    ) -> None:
         target = target.strip("@").lower()
 
         if amount < 1:
-            return await ctx.send(f"{ctx.author.name}, you must give at least 1 credit.")
+            return await ctx.send(
+                f"{ctx.author.name}, you must give at least 1 credit."
+            )
 
-        if amount > await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", ctx.author.name):
-            return await ctx.send(f"{ctx.author.name}, you do not have the credits to give.")
+        if amount > await self.bot.db.field(
+            "SELECT Credits FROM economy WHERE User = ?", ctx.author.name
+        ):
+            return await ctx.send(
+                f"{ctx.author.name}, you do not have the credits to give."
+            )
 
-        if await self.bot.db.field("SELECT Credits FROM economy WHERE User = ?", target) is None:
-            return await ctx.send(f"{ctx.author.name}, that user is not in the database.")
+        if (
+            await self.bot.db.field(
+                "SELECT Credits FROM economy WHERE User = ?", target
+            )
+            is None
+        ):
+            return await ctx.send(
+                f"{ctx.author.name}, that user is not in the database."
+            )
 
-        await self.bot.db.execute("UPDATE economy SET Credits = Credits + ? WHERE User = ?", amount, target)
+        await self.bot.db.execute(
+            "UPDATE economy SET Credits = Credits + ? WHERE User = ?",
+            amount,
+            target,
+        )
         await self.bot.db.execute(
             "UPDATE economy SET Credits = Credits - ? WHERE User = ?",
             amount,
             ctx.author.name,
         )
-        await ctx.send(f"{ctx.author.name} gave {amount:,} credit(s) to {target}!")
+        await ctx.send(
+            f"{ctx.author.name} gave {amount:,} credit(s) to {target}!"
+        )
 
     @commands.command(name="bank")
     async def bank_command(self, ctx: commands.bot.Context) -> None:
-        bal: int = await self.bot.db.field("SELECT Credits FROM economy WHERE User = 'bank'")
+        bal: int = await self.bot.db.field(
+            "SELECT Credits FROM economy WHERE User = 'bank'"
+        )
         await ctx.send(f"There are currently {bal:,} credit(s) in the bank.")
 
 

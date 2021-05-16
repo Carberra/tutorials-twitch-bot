@@ -14,7 +14,9 @@ class Meta:
         if data is None:
             return await ctx.send("This channel is not currently live.")
 
-        uptime = dt.datetime.utcnow() - dt.datetime.fromisoformat(data["started_at"][:-1])
+        uptime = dt.datetime.utcnow() - dt.datetime.fromisoformat(
+            data["started_at"][:-1]
+        )
         await ctx.send(f"{uptime}")
 
     @commands.command(name="source")
@@ -36,26 +38,27 @@ class Meta:
     @commands.command(name="patreon")
     async def patreon_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://patreon.carberra.xyz")
-        
+
     @commands.command(name="plans", aliases=["plan"])
     async def plans_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://plans.carberra.xyz")
-        
+
     @commands.command(name="facebook")
     async def facebook_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://facebook.carberra.xyz")
-        
+
     @commands.command(name="lbry", aliases=["odysee"])
     async def lbry_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://lbry.carberra.xyz")
-    
+
     @commands.command(name="donate", aliases=["tip"])
     async def donate_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://tip.carberra.xyz")
-        
+
     @commands.command(name="docs")
     async def docs_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send("https://docs.carberra.xyz")
-  
+
+
 def prepare(bot: commands.Bot) -> None:
     bot.add_cog(Meta(bot))

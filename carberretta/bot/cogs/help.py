@@ -9,7 +9,10 @@ class Help:
     async def help_command(self, ctx: commands.bot.Context) -> None:
         await ctx.send(
             "Commands: {}".format(
-                " • ".join("|".join([cmd.name, *(cmd.aliases or [])]) for cmd in self.bot.commands.values())
+                " • ".join(
+                    "|".join([cmd.name, *(cmd.aliases or [])])
+                    for cmd in self.bot.commands.values()
+                )
             )
         )
 

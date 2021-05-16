@@ -13,7 +13,9 @@ from carberretta.db import Database
 
 class Bot(commands.Bot):
     def __init__(self) -> None:
-        self._cogs: t.List[str] = [p.stem for p in Path(".").glob("./carberretta/bot/cogs/*.py")]
+        self._cogs: t.List[str] = [
+            p.stem for p in Path(".").glob("./carberretta/bot/cogs/*.py")
+        ]
         self.scheduler = AsyncIOScheduler()
         self.scheduler.configure(timezone=utc)
         self.db = Database(self)
@@ -48,9 +50,13 @@ class Bot(commands.Bot):
         print(" Connected to database.")
 
         self.scheduler.start()
-        print(f" Scheduler started ({len(self.scheduler.get_jobs()):,} job(s)).")
+        print(
+            f" Scheduler started ({len(self.scheduler.get_jobs()):,} job(s))."
+        )
 
-        self.channel: twitchio.Channel = self.get_channel(next(iter(self.initial_channels)))
+        self.channel: twitchio.Channel = self.get_channel(
+            next(iter(self.initial_channels))
+        )
         await self.channel.send(f"{Config.NICK} is now online!")
         print("Bot ready. Do NOT use CTRL+C to shut the bot down!")
 
@@ -67,12 +73,20 @@ class Bot(commands.Bot):
     async def on_error(self, error, data=None) -> None:
         raise
 
-    async def event_command_error(self, ctx: commands.bot.Context, exc: twitchio.ClientError) -> None:
+    async def event_command_error(
+        self, ctx: commands.bot.Context, exc: twitchio.ClientError
+    ) -> None:
         if isinstance(exc, commands.CommandNotFound):
-            return await ctx.send(f"That is not a registered command. Type {Config.PREFIX}help for a list.")
+            return await ctx.send(
+                f"That is not a registered command. "
+                "Type {Config.PREFIX}help for a list."
+            )
 
         if isinstance(exc, commands.MissingRequiredArgument):
-            return await ctx.send(f"No `{exc.param.name}` argument was passed, despite being required.")
+            return await ctx.send(
+                f"No `{exc.param.name}` argument was passed, "
+                "despite being required."
+            )
 
         if isinstance(exc, commands.BadArgument):
             return await ctx.send("One or more arguments are invalid.")
